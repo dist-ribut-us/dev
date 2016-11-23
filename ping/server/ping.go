@@ -7,18 +7,28 @@ import (
 	"github.com/dist-ribut-us/crypto"
 	"github.com/dist-ribut-us/overlay"
 	"github.com/dist-ribut-us/rnet"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
 
 func main() {
-	srv, err := overlay.NewServer(":7667")
+	f, err := os.Create("out.log")
 	if err != nil {
 		panic(err)
 	}
+	log.SetOutput(f)
+	log.Println("Starting")
+
+	srv, err := overlay.NewServer(":7667")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.RemoteAddr)
 		keyStr := r.URL.Query().Get("key")
 		portStr := r.URL.Query().Get("port")
 		w.Write([]byte(r.RemoteAddr))
