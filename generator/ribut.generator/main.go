@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/dist-ribut-us/generator"
+	"github.com/dist-ribut-us/dev/generator"
 	"os"
 )
 
