@@ -1,0 +1,9 @@
+{
+  "Package": "test",
+  "Imports": ["foo","bar"],
+  "TSMaps": [{
+    "Key":"string",
+    "Val":"int",
+    "Name": "StringIntMap"
+  }]
+}
