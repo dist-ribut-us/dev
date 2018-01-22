@@ -13,8 +13,10 @@ var dirs = []string{
 	"bufpool",
 	"crypto",
 	"dht",
+	"dhtserver",
 	"errors",
 	"ipc",
+	"ipcrouter",
 	"log",
 	"merkle",
 	"message",
@@ -24,6 +26,9 @@ var dirs = []string{
 	"prog",
 	"rnet",
 	"serial",
+	"vm",
+	"vm/ops",
+	"vm/vmtest",
 }
 
 func main() {
@@ -45,6 +50,11 @@ func main() {
 			Name:   "build",
 			Usage:  "Only runs generate and build",
 			Action: justBuild,
+		},
+		{
+			Name:   "generate",
+			Usage:  "Only runs generate",
+			Action: justGenerate,
 		},
 	}
 
@@ -69,6 +79,11 @@ func justBuild(c *cli.Context) error {
 	return nil
 }
 
+func justGenerate(c *cli.Context) error {
+	generate()
+	return nil
+}
+
 func ributStatus(c *cli.Context) error {
 	clear()
 	lineCount()
@@ -89,12 +104,13 @@ func generate() {
 	print("ribut.generator < packeter/gen.json >packeter/gen.go")
 	print("ribut.generator < overlay/gen.json >overlay/gen.go")
 	print("ribut.generator < ipc/gen.json >ipc/gen.go")
+	print("ribut.generator < ipcrouter/gen.json >ipcrouter/gen.go")
 }
 
 func build() {
 	print("go install github.com/dist-ribut-us/pool/ribut.pool")
 	print("go install github.com/dist-ribut-us/overlay/ribut.overlay")
-	print("go install github.com/dist-ribut-us/dht/ribut.dht")
+	print("go install github.com/dist-ribut-us/dhtserver/ribut.dht")
 	print("go install github.com/dist-ribut-us/beacon/ribut.beacon")
 }
 

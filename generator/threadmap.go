@@ -39,7 +39,7 @@ func (t *{{.Name}}) {{if .Export}}Set{{else}}set{{end}}(key {{.Key}}, val {{.Val
 
 func (t *{{.Name}}) {{if .Export}}Delete{{else}}delete{{end}}(keys ...{{.Key}}) {
 	t.Lock()
-	for _,key := range keys{
+	for _, key := range keys {
 		delete(t.Map, key)
 	}
 	t.Unlock()

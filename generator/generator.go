@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"sort"
 	"text/template"
 )
 
@@ -43,6 +44,7 @@ func (g *GeneratorFile) checkImports() {
 	for imp := range imps {
 		g.Imports = append(g.Imports, imp)
 	}
+	sort.Slice(g.Imports, func(i, j int) bool { return g.Imports[i] < g.Imports[j] })
 }
 
 func Read(r io.Reader) (*GeneratorFile, error) {
