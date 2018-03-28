@@ -13,6 +13,7 @@ var dirs = []string{
 	"bufpool",
 	"crypto",
 	"dht",
+	"dht/dhtnetwork",
 	"dhtserver",
 	"errors",
 	"ipc",
