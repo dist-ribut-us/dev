@@ -1,11 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/dist-ribut-us/prog"
 	"github.com/urfave/cli"
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
+	"strings"
 )
 
 var dirs = []string{
@@ -13,7 +17,6 @@ var dirs = []string{
 	"bufpool",
 	"crypto",
 	"dht",
-	"dht/dhtnetwork",
 	"dhtserver",
 	"errors",
 	"ipc",
@@ -28,11 +31,16 @@ var dirs = []string{
 	"rnet",
 	"serial",
 	"vm",
-	"vm/ops",
-	"vm/vmtest",
 }
 
+var gopath string
+
 func main() {
+	gopath = os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = filepath.Join(prog.UserHomeDir(), "go")
+	}
+
 	app := cli.NewApp()
 	app.Name = "ribut.build"
 	app.Usage = "Show project status and if all tests are passing, run build"
@@ -116,7 +124,7 @@ func build() {
 }
 
 func projectRoot() {
-	chdir(os.Getenv("GOPATH"), "src", "github.com", "dist-ribut-us")
+	chdir(gopath, "src", "github.com", "dist-ribut-us")
 }
 
 func lineCount() {
@@ -139,12 +147,40 @@ func runStatus() bool {
 	return passing
 }
 
+func errCheck(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func test() (string, string) {
-	testOutput := run("go test")
-	if testOutput[:4] == "PASS" {
+	cmd := exec.Command("go", "test", "./...")
+
+	stdout := &bytes.Buffer{}
+	stderr := &bytes.Buffer{}
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+
+	cmd.Run()
+	cmd.Wait()
+
+	if errStr := stderr.String(); errStr != "" {
+		return "Error", errStr
+	}
+
+	outStr := stdout.String()
+	lines := strings.Split(outStr, "\n")
+	passed := true
+	for _, line := range lines {
+		if line != "" && strings.HasPrefix("FAIL", line) {
+			passed = false
+			break
+		}
+	}
+	if passed == true {
 		return "Pass", ""
 	}
-	return "Fail", testOutput
+	return "Fail", outStr
 }
 
 func run(cmd string) string {
